@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   header: {
     display: "flex",
     flexDirection: "row",
-    height: "12%",
+    height: "15%",
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
     width: "100%",

@@ -1,9 +1,12 @@
-import { useQuery } from "@apollo/client";
-import { Container, Spinner, View } from "native-base";
-import React, { useEffect, useState } from "react";
-import { Text } from "react-native";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
+import { Spinner, Text } from "native-base";
+import React, { useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 import RoomDetailsHeader from "../components/RoomDetailsHeader";
+import {
+  SEND_MESSAGE,
+  SEND_MESSAGE_RESPONSE,
+} from "../graphql/mutations/SEND_MESSAGE";
 import { GET_ROOM, ROOM_REPSONSE } from "../graphql/queries/GET_ROOM";
 
 interface Props {
@@ -11,21 +14,49 @@ interface Props {
 }
 
 const RoomDetails = ({ id }: Props) => {
-  const { data, error, loading } = useQuery<ROOM_REPSONSE>(GET_ROOM, {
+  const {
+    data: roomData,
+    loading,
+    subscribeToMore,
+  } = useQuery<ROOM_REPSONSE>(GET_ROOM, {
     variables: { id },
   });
 
+  const [SendMessage, { loading: sendMessageLoading }] =
+    useMutation<SEND_MESSAGE_RESPONSE>(SEND_MESSAGE);
+
   if (loading) return <Spinner color="blue" />;
-  if (!data) return;
+  if (!roomData) return;
+  const subscribeToNewMessages = () => {
+    subscribeToMore({
+      document: GET_ROOM,
+      variables: { id },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const newFeedItem = subscriptionData.data.room.messages;
+        newFeedItem.sort(
+          (a, b) =>
+            Number(new Date(b.insertedAt)) - Number(new Date(a.insertedAt))
+        );
+        return Object.assign({}, prev, {
+          room: {
+            messages: [newFeedItem, ...prev.room.messages],
+          },
+        });
+      },
+    });
+  };
+
+  subscribeToNewMessages();
 
   return (
     <>
       <RoomDetailsHeader
-        roomPic={data.room.roomPic}
-        roomTitle={data.room.name}
+        roomPic={roomData.room.roomPic}
+        roomTitle={roomData.room.name}
       />
       <GiftedChat
-        messages={data.room.messages.map((message) => {
+        messages={roomData.room.messages.map((message) => {
           const parts = message.insertedAt.split(" ");
           const largeData = parts[0].split("-");
           const smallData = parts[1].split(":");
@@ -47,7 +78,11 @@ const RoomDetails = ({ id }: Props) => {
             },
           };
         })}
+        onSend={(newMessage) =>
+          SendMessage({ variables: { body: newMessage[0].text, roomId: id } })
+        }
       />
+      {sendMessageLoading && <Text>Loading...</Text>}
     </>
   );
 };
