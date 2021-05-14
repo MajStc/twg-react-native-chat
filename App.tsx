@@ -35,7 +35,7 @@ const App = () => {
   return (
     <ApolloProvider client={client}>
       <Router>
-        <Container style={{ backgroundColor: "#F0F8FF" }}>
+        <Container>
           <Scene
             key="rooms"
             title="rooms"
