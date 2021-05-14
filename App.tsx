@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import React from "react";
 import Rooms from "./src/views/Rooms";
 import {
   ApolloClient,
@@ -10,6 +8,10 @@ import {
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { TOKEN } from "./src/constants";
+import { Container } from "native-base";
+
+import { Router, Scene } from "react-native-router-flux";
+import RoomDetails from "./src/views/RoomDetails";
 
 const httpLink = createHttpLink({
   uri: "https://chat.thewidlarzgroup.com/api/graphiql",
@@ -29,28 +31,26 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const Stack = createStackNavigator();
-
-const MyTheme = {
-  dark: false,
-  colors: {
-    primary: "rgb(0,0,0)",
-    background: "#F0F8FF",
-    card: "#B6DEFD",
-    text: "#5603AD",
-    border: "#B6DEFD",
-    notification: "rgb(255, 69, 58)",
-  },
-};
-
 const App = () => {
   return (
     <ApolloProvider client={client}>
-      <NavigationContainer theme={MyTheme}>
-        <Stack.Navigator>
-          <Stack.Screen name="Rooms" component={Rooms} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <Router>
+        <Container style={{ backgroundColor: "#F0F8FF" }}>
+          <Scene
+            key="rooms"
+            title="rooms"
+            component={Rooms}
+            initial={true}
+            hideNavBar={true}
+          />
+          <Scene
+            key="roomdetails"
+            title="room-details"
+            component={RoomDetails}
+            hideNavBar={true}
+          />
+        </Container>
+      </Router>
     </ApolloProvider>
   );
 };

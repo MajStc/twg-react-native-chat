@@ -1,29 +1,27 @@
 import { useQuery } from "@apollo/client";
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { IRoom } from "../graphql/types/room";
 import { GET_ROOMS, ROOMS_RESPONSE } from "../graphql/queries/GET_ROOMS";
-import { GET_USER } from "../graphql/queries/GET_USER";
 import Room from "../components/Room";
+import { Spinner } from "native-base";
+import RoomHeader from "../components/RoomHeader";
 
 const Rooms = () => {
-  const { data, error, loading } = useQuery<ROOMS_RESPONSE>(GET_ROOMS);
+  const { data, loading } = useQuery<ROOMS_RESPONSE>(GET_ROOMS);
 
-  if (loading) return <Text>Loadingg...</Text>;
+  if (loading) return <Spinner color="blue" />;
 
   const rooms = data?.usersRooms.rooms;
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      {rooms && rooms.map((room) => <Room key={room.id} data={{ ...room }} />)}
-    </View>
+    <>
+      <RoomHeader />
+      <View style={{ flex: 1, alignItems: "center", marginTop: 10 }}>
+        {rooms &&
+          rooms.map((room) => <Room key={room.id} data={{ ...room }} />)}
+      </View>
+    </>
   );
 };
-
-const styles = StyleSheet.create({
-  text: {
-    color: "white",
-  },
-});
 
 export default Rooms;
