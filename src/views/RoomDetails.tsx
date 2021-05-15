@@ -1,87 +1,97 @@
-import { useMutation, useQuery, useSubscription } from "@apollo/client";
-import { Spinner, Text } from "native-base";
-import React, { useEffect } from "react";
-import { GiftedChat } from "react-native-gifted-chat";
+import { useMutation, useQuery } from "@apollo/client";
+import { Spinner, View } from "native-base";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { StyleSheet } from "react-native";
+import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
+import { SendSVG } from "../../assets/svgs/SearchSVG";
+import RoomChat from "../components/RoomChat";
 import RoomDetailsHeader from "../components/RoomDetailsHeader";
-import {
-  SEND_MESSAGE,
-  SEND_MESSAGE_RESPONSE,
-} from "../graphql/mutations/SEND_MESSAGE";
+import { SEND_MESSAGE } from "../graphql/mutations/SEND_MESSAGE";
 import { GET_ROOM, ROOM_REPSONSE } from "../graphql/queries/GET_ROOM";
+import { MESSAGE_SUBSCRIPTION } from "../graphql/subscriptions/MESSAGE_SUBSCRIPTION";
 
 interface Props {
   id: string;
 }
 
 const RoomDetails = ({ id }: Props) => {
-  const {
-    data: roomData,
-    loading,
-    subscribeToMore,
-  } = useQuery<ROOM_REPSONSE>(GET_ROOM, {
+  const [input, setInput] = useState("");
+  const [SendMessage] = useMutation(SEND_MESSAGE);
+  const { data, loading, subscribeToMore } = useQuery<ROOM_REPSONSE>(GET_ROOM, {
     variables: { id },
   });
 
-  const [SendMessage, { loading: sendMessageLoading }] =
-    useMutation<SEND_MESSAGE_RESPONSE>(SEND_MESSAGE);
-
   if (loading) return <Spinner color="blue" />;
-  if (!roomData) return;
-  const subscribeToNewMessages = () => {
+
+  const moreMessages = () =>
     subscribeToMore({
       document: GET_ROOM,
       variables: { id },
       updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
-        const newFeedItem = subscriptionData.data.room.messages;
-        newFeedItem.sort((a, b) => +a.id - +b.id);
+        if (!subscriptionData) return prev;
+        const newMessage =
+          subscriptionData.data.room.messages[
+            subscriptionData.data.room.messages.length - 1
+          ];
         return Object.assign({}, prev, {
           room: {
-            messages: [newFeedItem, ...prev.room.messages],
+            messages: [...prev.room.messages, newMessage],
           },
         });
       },
     });
-  };
 
-  subscribeToNewMessages();
+  moreMessages();
 
   return (
     <>
-      <RoomDetailsHeader
-        roomPic={roomData.room.roomPic}
-        roomTitle={roomData.room.name}
-      />
-      <GiftedChat
-        messages={roomData.room.messages.map((message) => {
-          const parts = message.insertedAt.split(" ");
-          const largeData = parts[0].split("-");
-          const smallData = parts[1].split(":");
-          return {
-            _id: message.id,
-            text: message.body,
-            createdAt: new Date(
-              Number(largeData[0]),
-              Number(largeData[1]),
-              Number(largeData[2]),
-              Number(smallData[0]),
-              Number(smallData[1]),
-              Number(smallData[2])
-            ),
-            user: {
-              _id: message.user.id,
-              name: message.user.firstName,
-              avatar: message.user.profilePic,
-            },
-          };
-        })}
-        onSend={(newMessage) =>
-          SendMessage({ variables: { body: newMessage[0].text, roomId: id } })
-        }
-      />
-      {sendMessageLoading && <Text>Loading...</Text>}
+      {data && (
+        <>
+          <RoomDetailsHeader
+            roomPic={data.room.roomPic}
+            roomTitle={data.room.name}
+          />
+          <RoomChat {...data} />
+          <View style={styles.container}>
+            <TextInput
+              style={styles.input}
+              value={input}
+              onChangeText={setInput}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                if (!!input) {
+                  SendMessage({ variables: { body: input, roomId: id } });
+                  setInput("");
+                }
+              }}
+            >
+              <SendSVG />
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    backgroundColor: "#B6DEFD",
+  },
+  input: {
+    backgroundColor: "white",
+    width: "80%",
+    marginLeft: 10,
+    borderRadius: 14,
+    borderBottomRightRadius: 0,
+    padding: 3,
+    paddingLeft: 5,
+  },
+});
 
 export default RoomDetails;

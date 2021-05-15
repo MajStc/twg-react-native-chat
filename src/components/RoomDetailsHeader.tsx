@@ -14,7 +14,10 @@ const RoomDetailsHeader = (props: Props) => {
   return (
     <View style={styles.header}>
       <View style={styles.detailsContainer}>
-        <ProfileSVG />
+        <View style={{ marginBottom: 10, transform: [{ scale: 0.7 }] }}>
+          <ProfileSVG />
+        </View>
+
         <Text style={styles.detailsText}>
           {props.roomTitle.length > 26
             ? `${props.roomTitle.slice(0, 26)}...`

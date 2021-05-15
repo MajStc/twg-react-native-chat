@@ -21,10 +21,7 @@ import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
 import { Socket as PhoenixSocket } from "phoenix";
 
 const phoenixSocket = new PhoenixSocket(
-  "wss://chat.thewidlarzgroup.com/socket",
-  {
-    params: () => TOKEN,
-  }
+  `wss://chat.thewidlarzgroup.com/socket?token=${TOKEN}`
 );
 
 const absintheSocket = AbsintheSocket.create(phoenixSocket);
