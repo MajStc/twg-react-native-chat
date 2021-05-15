@@ -2,6 +2,7 @@ import React from "react";
 import Rooms from "./src/views/Rooms";
 import {
   ApolloClient,
+  ApolloLink,
   ApolloProvider,
   createHttpLink,
   InMemoryCache,
@@ -13,15 +14,21 @@ import { Container } from "native-base";
 
 import { Router, Scene } from "react-native-router-flux";
 import RoomDetails from "./src/views/RoomDetails";
-import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 
-const wsLink = new WebSocketLink({
-  uri: "wss://chat.thewidlarzgroup.com/socket",
-  options: {
-    reconnect: true,
-  },
-});
+import * as AbsintheSocket from "@absinthe/socket";
+import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
+import { Socket as PhoenixSocket } from "phoenix";
+
+const phoenixSocket = new PhoenixSocket(
+  "wss://chat.thewidlarzgroup.com/socket",
+  {
+    params: () => TOKEN,
+  }
+);
+
+const absintheSocket = AbsintheSocket.create(phoenixSocket);
+const wsLink = createAbsintheSocketLink(absintheSocket);
 
 const httpLink = createHttpLink({
   uri: "https://chat.thewidlarzgroup.com/api/graphiql",
@@ -44,7 +51,7 @@ const splitLink = split(
       definition.operation === "subscription"
     );
   },
-  wsLink,
+  wsLink as unknown as ApolloLink,
   authLink.concat(httpLink)
 );
 

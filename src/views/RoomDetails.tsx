@@ -34,10 +34,7 @@ const RoomDetails = ({ id }: Props) => {
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
         const newFeedItem = subscriptionData.data.room.messages;
-        newFeedItem.sort(
-          (a, b) =>
-            Number(new Date(b.insertedAt)) - Number(new Date(a.insertedAt))
-        );
+        newFeedItem.sort((a, b) => +a.id - +b.id);
         return Object.assign({}, prev, {
           room: {
             messages: [newFeedItem, ...prev.room.messages],
