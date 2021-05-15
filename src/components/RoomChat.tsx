@@ -1,73 +1,44 @@
-import { useQuery } from "@apollo/client";
-import { Spinner, Text } from "native-base";
+import MyMessage from "./messages/MyMessage";
 import React, { useRef } from "react";
+import { Spinner } from "native-base";
+import { useQuery } from "@apollo/client";
+import GuestMessage from "./messages/GuestMessage";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { ROOM_REPSONSE } from "../graphql/queries/GET_ROOM";
 import { GET_USER, GET_USER_RESPONSE } from "../graphql/queries/GET_USER";
 
 const RoomChat = ({ room }: ROOM_REPSONSE) => {
   const { data, loading } = useQuery<GET_USER_RESPONSE>(GET_USER);
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<ScrollView | null>(null);
 
-  if (loading) return <Spinner color="blue" />;
+  if (loading || !data) return <Spinner color="blue" />;
+
+  const handleScroll = () => {
+    if (scrollViewRef.current !== null)
+      scrollViewRef.current.scrollToEnd({ animated: true });
+  };
 
   return (
     <>
-      {data && (
-        <>
-          <ScrollView
-            ref={scrollViewRef}
-            onContentSizeChange={() =>
-              //@ts-ignore
-              scrollViewRef.current.scrollToEnd({ animated: true })
-            }
-          >
-            {room.messages.map((message) => (
-              <View key={message.id} style={styles.container}>
-                {message.user.id === data.user.id ? (
-                  <>
-                    <View style={styles.me}>
-                      <Text style={{ textAlign: "right", color: "white" }}>
-                        {message.body}
-                      </Text>
-                    </View>
-                    <Text style={{ fontSize: 10, textAlign: "right" }}>
-                      {message.insertedAt}
-                    </Text>
-                  </>
-                ) : (
-                  <>
-                    <View style={styles.guset}>
-                      <Text style={{ textAlign: "left" }}>{message.body}</Text>
-                    </View>
-                    <Text style={{ fontSize: 10 }}>{message.insertedAt}</Text>
-                  </>
-                )}
-              </View>
-            ))}
-          </ScrollView>
-        </>
-      )}
+      <ScrollView
+        ref={scrollViewRef}
+        onContentSizeChange={() => handleScroll()}
+      >
+        {room.messages.map((message) => (
+          <View key={message.id} style={styles.container}>
+            {message.user.id === data.user.id ? (
+              <MyMessage message={message} />
+            ) : (
+              <GuestMessage message={message} />
+            )}
+          </View>
+        ))}
+      </ScrollView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  me: {
-    alignSelf: "flex-end",
-    width: "60%",
-    backgroundColor: "#993AFC",
-    padding: 10,
-    borderRadius: 14,
-    borderBottomRightRadius: 0,
-  },
-  guset: {
-    width: "60%",
-    backgroundColor: "#FFFFFF",
-    padding: 10,
-    borderRadius: 14,
-    borderBottomLeftRadius: 0,
-  },
   container: {
     margin: 3,
   },

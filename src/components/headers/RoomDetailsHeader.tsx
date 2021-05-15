@@ -1,9 +1,9 @@
-import { View } from "native-base";
 import React from "react";
-import { Text, StyleSheet, Image } from "react-native";
-import { PhoneSVG } from "../../assets/svgs/PhoneSVG";
-import { ProfileSVG } from "../../assets/svgs/ProfileSVG";
-import { VideocallSVG } from "../../assets/svgs/VideocallSVG";
+import { View } from "native-base";
+import { Text, StyleSheet } from "react-native";
+import { PhoneSVG } from "../../../assets/svgs/PhoneSVG";
+import { ProfileSVG } from "../../../assets/svgs/ProfileSVG";
+import { VideocallSVG } from "../../../assets/svgs/VideocallSVG";
 
 interface Props {
   roomPic: string;
@@ -17,7 +17,6 @@ const RoomDetailsHeader = (props: Props) => {
         <View style={{ marginBottom: 10, transform: [{ scale: 0.7 }] }}>
           <ProfileSVG />
         </View>
-
         <Text style={styles.detailsText}>
           {props.roomTitle.length > 26
             ? `${props.roomTitle.slice(0, 26)}...`
@@ -40,24 +39,21 @@ const styles = StyleSheet.create({
   detailsContainer: {
     display: "flex",
     flexDirection: "row",
-    flexWrap: "nowrap",
     marginTop: 40,
     marginLeft: 6,
-    maxWidth: "70%",
   },
   detailsText: {
     fontWeight: "700",
   },
   header: {
+    height: "15%",
     display: "flex",
     flexDirection: "row",
-    height: "15%",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#B6DEFD",
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
-    width: "100%",
-    backgroundColor: "#B6DEFD",
-    justifyContent: "space-between",
-    alignItems: "center",
   },
   svgContainer: {
     display: "flex",

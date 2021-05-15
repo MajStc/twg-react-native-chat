@@ -1,8 +1,8 @@
 import { View } from "native-base";
 import React from "react";
 import { Text, StyleSheet } from "react-native";
-import { RoomsSVG } from "../../assets/svgs/RoomsSVG";
-import { SearchSVG } from "../../assets/svgs/SendSVG";
+import { RoomsSVG } from "../../../assets/svgs/RoomsSVG";
+import { SearchSVG } from "../../../assets/svgs/SendSVG";
 
 const RoomHeader = () => {
   return (
@@ -22,22 +22,21 @@ const RoomHeader = () => {
 
 const styles = StyleSheet.create({
   header: {
+    height: "15%",
     display: "flex",
     flexDirection: "row",
-    height: "15%",
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    width: "100%",
+    alignItems: "center",
     backgroundColor: "#B6DEFD",
     justifyContent: "space-between",
-    alignItems: "center",
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
   },
   text: {
     color: "#5603AD",
     fontSize: 28,
+    marginTop: 20,
     marginLeft: 10,
     fontWeight: "700",
-    marginTop: 20,
   },
   svgContainer: {
     display: "flex",

@@ -1,13 +1,10 @@
-import { useMutation, useQuery } from "@apollo/client";
-import { Spinner, View } from "native-base";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { StyleSheet } from "react-native";
-import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
-import { SendSVG } from "../../assets/svgs/SearchSVG";
+import React, { useEffect } from "react";
+import { Spinner } from "native-base";
+import { useQuery } from "@apollo/client";
 import RoomChat from "../components/RoomChat";
-import RoomDetailsHeader from "../components/RoomDetailsHeader";
-import { SEND_MESSAGE } from "../graphql/mutations/SEND_MESSAGE";
+import MyInputs from "../components/messages/MyInputs";
 import { GET_ROOM, ROOM_REPSONSE } from "../graphql/queries/GET_ROOM";
+import RoomDetailsHeader from "../components/headers/RoomDetailsHeader";
 import { MESSAGE_SUBSCRIPTION } from "../graphql/subscriptions/MESSAGE_SUBSCRIPTION";
 
 interface Props {
@@ -15,8 +12,6 @@ interface Props {
 }
 
 const RoomDetails = ({ id }: Props) => {
-  const [input, setInput] = useState("");
-  const [SendMessage] = useMutation(SEND_MESSAGE);
   const { data, loading, subscribeToMore } = useQuery<ROOM_REPSONSE>(GET_ROOM, {
     variables: { id },
   });
@@ -29,61 +24,21 @@ const RoomDetails = ({ id }: Props) => {
         console.log(prev);
         return prev;
       },
-      onError: (err) => console.log(err),
     });
   }, []);
 
-  if (loading) return <Spinner color="blue" />;
+  if (loading || !data) return <Spinner color="blue" />;
 
   return (
     <>
-      {data && (
-        <>
-          <RoomDetailsHeader
-            roomPic={data.room.roomPic}
-            roomTitle={data.room.name}
-          />
-          <RoomChat {...data} />
-          <View style={styles.container}>
-            <TextInput
-              style={styles.input}
-              value={input}
-              onChangeText={setInput}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                if (!!input) {
-                  SendMessage({ variables: { body: input, roomId: id } });
-                  setInput("");
-                }
-              }}
-            >
-              <SendSVG />
-            </TouchableOpacity>
-          </View>
-        </>
-      )}
+      <RoomDetailsHeader
+        roomPic={data.room.roomPic}
+        roomTitle={data.room.name}
+      />
+      <RoomChat {...data} />
+      <MyInputs id={id} />
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-    backgroundColor: "#B6DEFD",
-  },
-  input: {
-    backgroundColor: "white",
-    width: "80%",
-    marginLeft: 10,
-    borderRadius: 14,
-    borderBottomRightRadius: 0,
-    padding: 3,
-    paddingLeft: 5,
-  },
-});
 
 export default RoomDetails;
