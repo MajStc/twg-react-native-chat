@@ -1,39 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, View, Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { IRoom } from "../../graphql/types/room";
 import { Actions } from "react-native-router-flux";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { GET_ROOM, ROOM_REPSONSE } from "../../graphql/queries/GET_ROOM";
 import { Spinner } from "native-base";
-import { MESSAGE_SUBSCRIPTION } from "../../graphql/subscriptions/MESSAGE_SUBSCRIPTION";
+import {
+  MESSAGE_SUBSCRIPTION,
+  MESSAGE_SUBSCRIPTION_RESPONSE,
+} from "../../graphql/subscriptions/MESSAGE_SUBSCRIPTION";
 import LatestMessage from "./LatestMessage";
 import Avatar from "./Avatar";
+import { Message } from "../../graphql/types/message";
 
 interface Props {
+  id: string;
   data: IRoom;
 }
 
-const Room = ({ data }: Props) => {
-  const {
-    data: currentRoom,
-    loading,
-    subscribeToMore,
-  } = useQuery<ROOM_REPSONSE>(GET_ROOM, {
-    variables: { id: data.id },
+const Room = ({ id, data }: Props) => {
+  const { data: currentRoom, loading } = useQuery<ROOM_REPSONSE>(GET_ROOM, {
+    variables: { id },
   });
 
-  useEffect(() => {
-    subscribeToMore({
-      document: MESSAGE_SUBSCRIPTION,
-      variables: { roomId: data.id },
-      updateQuery: (prev, { subscriptionData }) => {
-        console.log(prev);
-        return prev;
-      },
-      onError: (err) => console.log(err),
-    });
-  }, []);
+  const { data: newMessage } = useSubscription(MESSAGE_SUBSCRIPTION, {
+    variables: { roomId: id },
+  });
 
   if (loading || !currentRoom) return <Spinner color="blue" />;
 
@@ -48,15 +41,18 @@ const Room = ({ data }: Props) => {
           <Text style={styles.title}>{data.name}</Text>
           <LatestMessage
             message={
-              currentRoom.room.messages[currentRoom.room.messages.length - 1]
-                .body
+              !!newMessage
+                ? newMessage?.messageAdded.body
+                : currentRoom.room.messages[
+                    currentRoom.room.messages.length - 1
+                  ].body
             }
           />
           <Text style={{ fontSize: 10 }}>
-            {
-              currentRoom?.room.messages[currentRoom!.room.messages.length - 1]
-                .insertedAt
-            }
+            {!!newMessage
+              ? newMessage?.messageAdded.insertedAt
+              : currentRoom.room.messages[currentRoom.room.messages.length - 1]
+                  .insertedAt}
           </Text>
         </View>
       </TouchableOpacity>

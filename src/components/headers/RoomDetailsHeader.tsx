@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   header: {
-    height: "15%",
+    height: "17%",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",

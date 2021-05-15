@@ -16,7 +16,7 @@ const Rooms = () => {
       <RoomHeader />
       <View style={{ flex: 1, alignItems: "center", marginTop: 10 }}>
         {data.usersRooms.rooms.map((room) => (
-          <Room key={room.id} data={room} />
+          <Room key={room.id} id={room.id} data={room} />
         ))}
       </View>
     </>

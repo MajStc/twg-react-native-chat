@@ -11,6 +11,14 @@ export const MESSAGE_SUBSCRIPTION = gql`
       body
       id
       insertedAt
+      user {
+        email
+        firstName
+        id
+        lastName
+        profilePic
+        role
+      }
     }
   }
 `;
