@@ -7,18 +7,16 @@ interface Props {
   message: Message;
 }
 
-const MyMessage = ({ message }: Props) => {
-  return (
-    <>
-      <View style={styles.me}>
-        <Text style={{ color: "white" }}>{message.body}</Text>
-      </View>
-      <Text style={{ fontSize: 10, textAlign: "right" }}>
-        {message.insertedAt}
-      </Text>
-    </>
-  );
-};
+const MyMessage = ({ message }: Props) => (
+  <>
+    <View style={styles.me}>
+      <Text style={{ color: "white" }}>{message.body}</Text>
+    </View>
+    <Text style={{ fontSize: 10, textAlign: "right" }}>
+      {message.insertedAt}
+    </Text>
+  </>
+);
 
 const styles = StyleSheet.create({
   me: {

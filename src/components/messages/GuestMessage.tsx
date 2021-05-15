@@ -7,16 +7,14 @@ interface Props {
   message: Message;
 }
 
-const GuestMessage = ({ message }: Props) => {
-  return (
-    <>
-      <View style={styles.guset}>
-        <Text style={{ textAlign: "left" }}>{message.body}</Text>
-      </View>
-      <Text style={{ fontSize: 10 }}>{message.insertedAt}</Text>
-    </>
-  );
-};
+const GuestMessage = ({ message }: Props) => (
+  <>
+    <View style={styles.guset}>
+      <Text style={{ textAlign: "left" }}>{message.body}</Text>
+    </View>
+    <Text style={{ fontSize: 10 }}>{message.insertedAt}</Text>
+  </>
+);
 
 const styles = StyleSheet.create({
   guset: {

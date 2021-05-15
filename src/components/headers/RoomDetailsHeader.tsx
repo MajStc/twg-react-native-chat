@@ -10,30 +10,28 @@ interface Props {
   roomTitle: string;
 }
 
-const RoomDetailsHeader = (props: Props) => {
-  return (
-    <View style={styles.header}>
-      <View style={styles.detailsContainer}>
-        <View style={{ marginBottom: 10, transform: [{ scale: 0.7 }] }}>
-          <ProfileSVG />
-        </View>
-        <Text style={styles.detailsText}>
-          {props.roomTitle.length > 26
-            ? `${props.roomTitle.slice(0, 26)}...`
-            : props.roomTitle}
-        </Text>
+const RoomDetailsHeader = (props: Props) => (
+  <View style={styles.header}>
+    <View style={styles.detailsContainer}>
+      <View style={{ marginBottom: 10, transform: [{ scale: 0.7 }] }}>
+        <ProfileSVG />
       </View>
-      <View style={styles.svgContainer}>
-        <View style={styles.svgContainerItem}>
-          <PhoneSVG />
-        </View>
-        <View style={styles.svgContainerItem}>
-          <VideocallSVG />
-        </View>
+      <Text style={styles.detailsText}>
+        {props.roomTitle.length > 26
+          ? `${props.roomTitle.slice(0, 26)}...`
+          : props.roomTitle}
+      </Text>
+    </View>
+    <View style={styles.svgContainer}>
+      <View style={styles.svgContainerItem}>
+        <PhoneSVG />
+      </View>
+      <View style={styles.svgContainerItem}>
+        <VideocallSVG />
       </View>
     </View>
-  );
-};
+  </View>
+);
 
 const styles = StyleSheet.create({
   detailsContainer: {
