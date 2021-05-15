@@ -21,27 +21,19 @@ const RoomDetails = ({ id }: Props) => {
     variables: { id },
   });
 
-  if (loading) return <Spinner color="blue" />;
-
-  const moreMessages = () =>
+  useEffect(() => {
     subscribeToMore({
-      document: GET_ROOM,
-      variables: { id },
+      document: MESSAGE_SUBSCRIPTION,
+      variables: { roomId: id },
       updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData) return prev;
-        const newMessage =
-          subscriptionData.data.room.messages[
-            subscriptionData.data.room.messages.length - 1
-          ];
-        return Object.assign({}, prev, {
-          room: {
-            messages: [...prev.room.messages, newMessage],
-          },
-        });
+        console.log(prev);
+        return prev;
       },
+      onError: (err) => console.log(err),
     });
+  }, []);
 
-  moreMessages();
+  if (loading) return <Spinner color="blue" />;
 
   return (
     <>

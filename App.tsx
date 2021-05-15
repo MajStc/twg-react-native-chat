@@ -1,5 +1,5 @@
-import React from "react";
-import Rooms from "./src/views/Rooms";
+import * as AbsintheSocket from "@absinthe/socket";
+import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
 import {
   ApolloClient,
   ApolloLink,
@@ -9,16 +9,14 @@ import {
   split,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { TOKEN } from "./src/constants";
-import { Container } from "native-base";
-
-import { Router, Scene } from "react-native-router-flux";
-import RoomDetails from "./src/views/RoomDetails";
 import { getMainDefinition } from "@apollo/client/utilities";
-
-import * as AbsintheSocket from "@absinthe/socket";
-import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
+import { Container } from "native-base";
 import { Socket as PhoenixSocket } from "phoenix";
+import React from "react";
+import { Router, Scene } from "react-native-router-flux";
+import { TOKEN } from "./src/constants";
+import RoomDetails from "./src/views/RoomDetails";
+import Rooms from "./src/views/Rooms";
 
 const phoenixSocket = new PhoenixSocket(
   `wss://chat.thewidlarzgroup.com/socket?token=${TOKEN}`
