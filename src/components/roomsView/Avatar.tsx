@@ -1,10 +1,10 @@
 import React from "react";
 import { Image } from "react-native";
 import { ProfileSVG } from "../../../assets/svgs/ProfileSVG";
-import { IRoom } from "../../graphql/types/room";
+import { SingleRoomType } from "../../graphql/types/singleRoomType";
 
 interface Props {
-  data: IRoom;
+  data: SingleRoomType;
 }
 
 const Avatar = ({ data }: Props) => (

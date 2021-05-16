@@ -13,7 +13,7 @@ interface Props {
 const RoomDetailsHeader = (props: Props) => (
   <View style={styles.header}>
     <View style={styles.detailsContainer}>
-      <View style={{ marginBottom: 10, transform: [{ scale: 0.7 }] }}>
+      <View style={{ marginBottom: 20, transform: [{ scale: 0.7 }] }}>
         <ProfileSVG />
       </View>
       <Text style={styles.detailsText}>

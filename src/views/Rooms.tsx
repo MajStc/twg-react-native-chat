@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
-import { Spinner } from "native-base";
+import { Container, Spinner } from "native-base";
 import React from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import Room from "../components/roomsView/Room";
 import RoomHeader from "../components/headers/RoomHeader";
 import { GET_ROOMS, ROOMS_RESPONSE } from "../graphql/queries/GET_ROOMS";
@@ -12,14 +12,21 @@ const Rooms = () => {
   if (loading || !data) return <Spinner color="blue" />;
 
   return (
-    <>
+    <Container style={{ backgroundColor: "#F0F8FF" }}>
       <RoomHeader />
-      <View style={{ flex: 1, alignItems: "center", marginTop: 10 }}>
+      <View
+        style={{
+          display: "flex",
+          flex: 1,
+          alignItems: "center",
+          marginTop: 10,
+        }}
+      >
         {data.usersRooms.rooms.map((room) => (
           <Room key={room.id} id={room.id} data={room} />
         ))}
       </View>
-    </>
+    </Container>
   );
 };
 

@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client";
-import { IRoom } from "../types/room";
+import { SingleRoomType } from "../types/singleRoomType";
 
 export type ROOMS_RESPONSE = {
   usersRooms: {
-    rooms: [IRoom];
+    rooms: [SingleRoomType];
   };
 };
 

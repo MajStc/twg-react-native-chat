@@ -1,13 +1,15 @@
-import { useMutation, useQuery, useSubscription } from "@apollo/client";
-import { Spinner } from "native-base";
-import React, { useEffect, useState } from "react";
-import RoomDetailsHeader from "../components/headers/RoomDetailsHeader";
-import { GET_ROOM, ROOM_REPSONSE } from "../graphql/queries/GET_ROOM";
+import { useMutation, useQuery } from "@apollo/client";
+import { Container, Spinner } from "native-base";
+import React, { useEffect } from "react";
 import { GiftedChat, Message } from "react-native-gifted-chat";
-import { GET_USER, GET_USER_RESPONSE } from "../graphql/queries/GET_USER";
+import Bubble from "../components/chatComponents/Bubble";
+import Inputs from "../components/chatComponents/Inputs";
+import RoomDetailsHeader from "../components/headers/RoomDetailsHeader";
 import { SEND_MESSAGE } from "../graphql/mutations/SEND_MESSAGE";
-import mapToChatMessage from "../utils/mapToChatMessage";
+import { GET_ROOM, ROOM_REPSONSE } from "../graphql/queries/GET_ROOM";
+import { GET_USER, GET_USER_RESPONSE } from "../graphql/queries/GET_USER";
 import { MESSAGE_SUBSCRIPTION } from "../graphql/subscriptions/MESSAGE_SUBSCRIPTION";
+import mapToChatMessage from "../utils/mapToChatMessage";
 
 interface Props {
   id: string;
@@ -42,7 +44,7 @@ const RoomDetails = ({ id }: Props) => {
   if (loading || !data || !me) return <Spinner color="blue" />;
 
   return (
-    <>
+    <Container style={{ backgroundColor: "#F0F8FF" }}>
       <RoomDetailsHeader
         roomPic={data.room.roomPic}
         roomTitle={data.room.name}
@@ -57,8 +59,10 @@ const RoomDetails = ({ id }: Props) => {
         user={{
           _id: me.user.id,
         }}
+        renderInputToolbar={Inputs}
+        renderBubble={Bubble}
       />
-    </>
+    </Container>
   );
 };
 
